@@ -1,38 +1,53 @@
-# Webpage Graph Database with Kùzu and yFiles
+# Cloud-Deployable Webpage Knowledge Graph with Kùzu and yFiles
 
-This project creates a graph database using [Kùzu](https://kuzudb.com/) to store and analyze connections between webpages, with interactive visualizations powered by [yFiles](https://www.yworks.com/products/yfiles). Developed to explore interconnected ideas across a curated set of webpages and to master the capabilities of Kùzu graph databases, this project serves as both a practical tool for discovering hidden relationships and an educational exercise in graph database design.
+This project builds a **graph database** using [Kùzu](https://kuzudb.com/) to store and analyze connections between webpages. It now includes **production-ready cloud deployment** features (multi-worker serving via Gunicorn, asynchronous task processing with Celery + Redis, and full Docker + docker-compose support). Interactive visualizations are powered by [yFiles](https://www.yworks.com/products/yfiles).
+
+Originally developed to explore interconnected ideas across curated webpages and to learn Kùzu graph database workflows, the project has evolved into a scalable, cloud-friendly tool for content relationship discovery and knowledge graph experimentation.
 
 ![image](https://github.com/user-attachments/assets/1c53a0d9-b26d-484a-b903-678864697fc0)
 
-
 ## Project Overview
 
-**Key Value Propositions**:
-- **Discover Hidden Connections**: Identifies latent relationships between webpages, such as links that share keywords despite belonging to different categories, facilitating deeper insights into content relationships.
-- **Scalable Foundation**: Provides a flexible graph schema that can scale to larger datasets with automated data ingestion, supporting applications in content analysis, recommendation systems, or knowledge discovery.
-- **Learning Kùzu**: Serves as a hands-on exploration of Kùzu’s schema creation, Cypher querying, and database management, offering a practical introduction to graph database workflows.
-- **Visual Insights**: Transforms complex relationships into clear, interactive visualizations, making it easier to communicate findings to technical and non-technical audiences.
+**Key Value Propositions**
 
-The pipeline fetches webpage content, processes it using an LLM (Mistral 7B via Ollama) for categorization and keyword extraction, stores the data in Kùzu, and visualizes interconnections with yFiles. 
+- **Discover Hidden Connections** — Finds latent relationships between webpages (e.g., shared keywords across different categories)
+- **Production-Ready & Cloud Deployable** — Multi-worker Gunicorn serving, Celery background tasks, Redis broker, Dockerized architecture
+- **Scalable Graph Foundation** — Flexible Kùzu schema designed to grow with larger datasets; supports automated ingestion pipelines
+- **Educational Kùzu Playground** — Hands-on experience with schema design, Cypher queries, and graph database operations
+- **Visual Insights** — Interactive yFiles visualizations make complex relationships easy to understand
+
+The pipeline:
+1. Fetches webpage content  
+2. Processes it with Mistral 7B (via Ollama) for cleaning, categorization & keyword extraction  
+3. Stores structured data in Kùzu  
+4. Analyzes cross-category keyword overlaps  
+5. Visualizes the graph with yFiles
 
 ## Features
 
-- **Data Collection**: Fetches titles and content from a predefined list of URLs.
-- **Content Processing**: Uses BeautifulSoup for scraping and an LLM for cleaning and extracting metadata (categories, keywords).
-- **Graph Database**: Stores links, categories, and keywords as nodes in Kùzu, with relationships (`BELONGS_TO`, `HAS_KEYWORD`).
-- **Interconnection Analysis**: Queries Kùzu to find links sharing keywords across different categories.
-- **Visualization**: Renders the graph with yFiles, using distinct colors and shapes for links, categories, and keywords.
+- **Data Collection** — URL-based fetching with BeautifulSoup  
+- **Intelligent Content Processing** — LLM-powered cleaning + category/keyword extraction (up to 3 keywords per page)  
+- **Graph Storage** — Kùzu nodes: `Link`, `Category`, `Keyword`; relationships: `BELONGS_TO`, `HAS_KEYWORD`  
+- **Interconnection Discovery** — Cypher queries to find keyword-sharing links in different categories  
+- **Web Interface** — Flask app to add links, upload CSVs, view graph data  
+- **Background Processing** — Celery + Redis handles long-running tasks (scraping, LLM calls, DB writes) asynchronously  
+- **Production Deployment** — Gunicorn multi-worker server, Docker + docker-compose (web + worker + redis services)  
+- **Visualization** — yFiles-powered interactive graph rendering with color/shape differentiation
 
-## Improvements in Version 2
+## Improvements in Version 2 (Cloud-Ready Edition)
 
-Version 2 builds on the initial project with the following enhancements:
-- **LLM-Based Content Cleaning**: Replaced basic text processing with an LLM (Mistral 7B via Ollama) to clean BeautifulSoup-extracted content, categorizing it into `garbage_text`, `cleaned_content`, and `unsure_content` for more accurate and meaningful data extraction.
-- **Increased Keywords**: Expanded keyword extraction from one to up to three keywords per webpage, capturing a broader range of concepts and improving interconnection analysis.
-- **Prevented `db.lock` Errors**: Modified the database initialization and connection logic to ensure proper handling of the Kùzu database (`../db/graph_db`) across cells, preventing `db.lock` conflicts.
+- **Asynchronous Task Queue** — Celery + Redis moves scraping, LLM calls, and DB writes to background workers  
+- **Production Web Server** — Replaced Flask dev server with Gunicorn (multi-worker, configurable)  
+- **Containerized Deployment** — Full Docker support + docker-compose.yml for local/cloud consistency  
+- **LLM Content Cleaning** — Mistral 7B cleans scraped content more intelligently  
+- **More Keywords** — Up to 3 keywords per page for richer interconnections  
+- **Database Reliability** — Robust connection handling to avoid `db.lock` issues in containerized environments
 
-These improvements enhance data quality, enrich the graph structure, and improve the reliability of the database operations.
+## Quick Start (Local Development)
 
-## Dependencies
-See pyproject.toml (https://github.com/ch4444rlie/WebpagesGraphDatabase/blob/master/pyproject.toml)
-
-
+1. Clone the repo
+2. Create & activate virtual environment
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate    # Linux/macOS
+   .venv\Scripts\activate       # Windows
