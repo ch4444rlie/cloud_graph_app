@@ -1,0 +1,9 @@
+flask>=3.1.1
+kuzu>=0.10.0
+pyarrow>=20.0.0
+requests>=2.32.3
+beautifulsoup4>=4.12.3
+ollama>=0.3.3
+gunicorn>=23.0.0
+celery>=5.4.0
+redis>=5.0.0
